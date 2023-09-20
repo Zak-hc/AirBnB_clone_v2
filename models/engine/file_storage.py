@@ -58,11 +58,11 @@ class FileStorage:
 
     def delete(self, obj=None):
         if obj is not None:
-            key = "{}.{}".format(obj.__class__.__name__, obj.id)
+            keyy = "{}.{}".format(obj.__class__.__name__, obj.id)
         else:
             return
 
         try:
-            del self.__objects[key]
+            del self.__objects[keyy]
         except KeyError:
             return
