@@ -57,6 +57,7 @@ class FileStorage:
             pass
 
     def delete(self, obj=None):
+        """delete onj"""
         if obj == None:
             return
         #keyy = f"{obj.id}.{obj.__class__.__name__}"
