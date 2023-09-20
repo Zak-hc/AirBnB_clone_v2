@@ -10,7 +10,7 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
-from datetime import datetime
+
 
 class HBNBCommand(cmd.Cmd):
     """ Contains the functionality for the HBNB console"""
@@ -19,16 +19,16 @@ class HBNBCommand(cmd.Cmd):
     prompt = '(hbnb) ' if sys.__stdin__.isatty() else ''
 
     classes = {
-               'BaseModel': BaseModel, 'User': User, 'Place': Place,
-               'State': State, 'City': City, 'Amenity': Amenity,
-               'Review': Review
-              }
+        'BaseModel': BaseModel, 'User': User, 'Place': Place,
+        'State': State, 'City': City, 'Amenity': Amenity,
+        'Review': Review
+    }
     dot_cmds = ['all', 'count', 'show', 'destroy', 'update']
     types = {
-             'number_rooms': int, 'number_bathrooms': int,
-             'max_guest': int, 'price_by_night': int,
-             'latitude': float, 'longitude': float
-            }
+        'number_rooms': int, 'number_bathrooms': int,
+        'max_guest': int, 'price_by_night': int,
+        'latitude': float, 'longitude': float
+    }
 
     def preloop(self):
         """Prints if isatty is false"""
@@ -113,42 +113,92 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    def do_create(self, args):
+    def do_create(self, arg):
         """ Create an object of any class"""
-        if not args:
+        if len(arg) == 0:
             print("** class name missing **")
             return
-        
-        class_name, *params = args.split()
-        
-        if class_name not in HBNBCommand.classes:
+
+        args = arg.split()
+
+        if args[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
 
-        params_dictionaire = {}
-        
-        for i in params:
-            key, value = i.split('=')
-            
-            if value.startswith('"') and value.endswith('"'):   
-                value = value[1:-1]
-                value = value.replace('\\"', '"')
-                value = value.replace('_', ' ')
-            else:
-                try:
-                    if '.' in value:
-                        value = float(value)
-                    else:
-                        value = int(value)
-                except ValueError:
-                    pass
-            params_dictionaire[key] = value
-        if 'updated_at' not in params_dictionaire:
-            params_dictionaire['updated_at'] = datetime.now()
-        
-        new_instance = HBNBCommand.classes[class_name](**params_dictionaire)
-        new_instance.save()
+        params_dictionary = {}
+        for param in range(1, len(args)):
+            try:
+                [key, value] = args[param].split("=")
+
+        # Remove double quotes if they enclose the value
+                if not self.is_numeric(value) and (value[0] != '"' or value[-1] != '"'):
+                    continue
+
+                if self.is_numeric(value):
+                    value = self.to_number(value)
+                else:
+                    value = value[1:-1].replace("_", " ").replace('"', '\\"')
+
+                params_dictionary[key] = value
+
+            except ValueError:
+                pass
+
+        # Store the parameter in the dictionary
+
+        new_instance = HBNBCommand.classes[args[0]]()
+        new_instance.__dict__.update(**params_dictionary)
+
         print(new_instance.id)
+        storage.save()
+
+    # def do_create(self, args):
+        # """ Create an object of any class"""
+        # if not args:
+        #   print("** class name missing **")
+        #  return
+
+        # class_name, *params = args.split()
+
+       # if class_name not in HBNBCommand.classes:
+        #    print("** class doesn't exist **")
+        #   return
+
+       # params_dictionaire = {}
+
+       # for i in params:
+        #  key, value = i.split('=')
+        # if key == '__class__':
+        #    continue
+
+        # if value.startswith('"') and value.endswith('"'):
+        #   value = value[1:-1]
+        #  value = value.replace('\\"', '"')
+        # value = value.replace('_', ' ')
+        # else:
+        #    try:
+        #       if '.' in value:
+        #          value = float(value)
+        #     else:
+        #        value = int(value)
+        # except ValueError:
+        #    pass
+        # params_dictionaire[key] = value
+
+        # if 'created_at' not in params_dictionaire:
+        #   params_dictionaire['created_at'] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
+        #  print('lool')
+       # if 'updated_at' not in params_dictionaire:
+        #    params_dictionaire['updated_at'] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
+        # print('lool')
+
+       # try:
+
+        #    new_instance = HBNBCommand.classes[class_name](**params_dictionaire)
+        #   new_instance.save()
+        #  print(new_instance.id)
+        # except Exception as e:
+        #   print(e)
 #    def do_create(self, args):
  #       """ Create an object of any class"""
   #      if not args:
@@ -157,10 +207,10 @@ class HBNBCommand(cmd.Cmd):
      #   elif args not in HBNBCommand.classes:
       #      print("** class doesn't exist **")
        #     return
-        #new_instance = HBNBCommand.classes[args]()
-        #storage.save()
-        #print(new_instance.id)
-        #storage.save()
+        # new_instance = HBNBCommand.classes[args]()
+        # storage.save()
+        # print(new_instance.id)
+        # storage.save()
 
     def help_create(self):
         """ Help information for the create method """
@@ -223,7 +273,7 @@ class HBNBCommand(cmd.Cmd):
         key = c_name + "." + c_id
 
         try:
-            del(storage.all()[key])
+            del (storage.all()[key])
             storage.save()
         except KeyError:
             print("** no instance found **")
@@ -355,6 +405,25 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
+    def is_numeric(self, vvalue):
+        try:
+            float(vvalue)
+            return True
+        except ValueError:
+            return False
+
+    def to_number(self, vvalue):
+        try:
+            number = int(vvalue)
+            return number
+        except ValueError:
+            try:
+                number = float(vvalue)
+                return number
+            except ValueError:
+                return None
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
