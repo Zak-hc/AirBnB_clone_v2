@@ -10,7 +10,7 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
-
+from datetime import datetime
 
 class HBNBCommand(cmd.Cmd):
     """ Contains the functionality for the HBNB console"""
@@ -133,23 +133,22 @@ class HBNBCommand(cmd.Cmd):
             if value.startswith('"') and value.endswith('"'):   
                 value = value[1:-1]
                 value = value.replace('\\"', '"')
-            value = value.replace('_', ' ')
-            if key == 'updated_at':
-                if not value:
-                    value = '2023-09-18T12:00:00'
-            try:
-                if '.' in value:
-                    value = float(value)
-                else:
-                    value = int(value)
-            except ValueError:
-                pass
+                value = value.replace('_', ' ')
+            else:
+                try:
+                    if '.' in value:
+                        value = float(value)
+                    else:
+                        value = int(value)
+                except ValueError:
+                    pass
             params_dictionaire[key] = value
-
+        if 'updated_at' not in params_dictionaire:
+            params_dictionaire['updated_at'] = datetime.now()
+        
         new_instance = HBNBCommand.classes[class_name](**params_dictionaire)
-        storage.save()
+        new_instance.save()
         print(new_instance.id)
-        storage.save()
 #    def do_create(self, args):
  #       """ Create an object of any class"""
   #      if not args:
