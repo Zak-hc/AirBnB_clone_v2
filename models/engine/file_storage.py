@@ -60,7 +60,7 @@ class FileStorage:
         """delete onj"""
         if obj == None:
             return
-        #keyy = f"{obj.id}.{obj.__class__.__name__}"
+        # keyy = f"{obj.id}.{obj.__class__.__name__}"
         keyy = "{}.{}".format(obj.__class__.__name__, obj.id)
 
         try:
