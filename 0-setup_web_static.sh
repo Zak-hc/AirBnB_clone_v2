@@ -8,7 +8,7 @@ echo "ya saaaalam" >>  /data/web_static/releases/test/index.html
 ln -sf   /data/web_static/releases/test/  /data/web_static/current
 chown -R ubuntu:ubuntu /data/
 v="location /hbnb_static { alias /data/web_static/current/; }"
-n="root /var/www/html;"
+n="listen 80 default_server;"
 sed -i "\%^\t$n%a\ \t$v" /etc/nginx/sites-available/default
 nginx -t
 service nginx restart
