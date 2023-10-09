@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #comment
-sudo su
+sudo sh
 apt-get update
 apt-get install nginx -y
 mkdir -p /data/web_static/releases/test/
