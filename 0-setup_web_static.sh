@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 #comment
-sudo sh
 apt-get update
 apt-get install nginx -y
 mkdir -p /data/web_static/releases/test/
 mkdir -p /data/web_static/shared/
-sudo echo "ya saaaalam" >>  /data/web_static/releases/test/index.html
+echo "ya saaaalam" >>  /data/web_static/releases/test/index.html
 ln -sf   /data/web_static/releases/test/  /data/web_static/current
 chown -R ubuntu:ubuntu /data/
 v="location /hbnb_static { alias /data/web_static/current/; }"
