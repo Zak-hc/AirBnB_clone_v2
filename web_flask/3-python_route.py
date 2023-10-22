@@ -30,6 +30,7 @@ def maki(text):
     text = text.replace("_", " ")
     return "Python " + text
 
+
 @app.route("/python", strict_slashes=False)
 def maku():
     '''lll'''
