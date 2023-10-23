@@ -40,7 +40,7 @@ def maku():
 @app.route("/number/<int:n>", strict_slashes=False)
 def maky(n):
     '''lll'''
-    return n + "is a number"
+    return "{} is a number".format(n)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
